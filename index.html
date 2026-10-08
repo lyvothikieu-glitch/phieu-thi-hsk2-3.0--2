@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phiếu Làm Bài HSK 3.0 - Cấp Độ 2 (Đề 2)</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f0f2f5; margin: 0; padding: 20px; color: #333; }
+        .container { max-width: 1200px; margin: 0 auto; background: #fff; padding: 30px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        h1, h2 { text-align: center; color: #1976d2; margin-bottom: 5px; }
+        .subtitle { text-align: center; color: #666; margin-bottom: 30px; }
+        
+        .student-info { display: flex; gap: 15px; margin-bottom: 30px; flex-wrap: wrap; background: #fafafa; padding: 15px; border-radius: 8px; border: 1px solid #eee; }
+        .student-info input { flex: 1; padding: 10px; border: 1px solid #ccc; border-radius: 5px; min-width: 200px; font-size: 16px; }
+        
+        .grid-container { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 30px; }
+        @media (max-width: 992px) { .grid-container { grid-template-columns: 1fr 1fr; } }
+        @media (max-width: 768px) { .grid-container { grid-template-columns: 1fr; } }
+        
+        .main-title { font-size: 18px; font-weight: bold; text-align: center; margin-bottom: 20px; color: #fff; background: #1976d2; padding: 10px; border-radius: 5px; }
+        .section-title { background: #e3f2fd; padding: 10px 15px; font-weight: bold; margin: 20px 0 15px 0; border-left: 4px solid #1976d2; color: #1565c0; font-size: 14px; }
+        
+        .question { display: flex; align-items: center; margin-bottom: 12px; padding: 5px 0; }
+        .question-num { font-weight: bold; width: 40px; font-size: 15px; color: #555; }
+        .options { display: flex; gap: 8px; flex-wrap: wrap; }
+        
+        .options label {
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            width: 32px; height: 32px; border-radius: 50%;
+            border: 2px solid #ccc; background: #fff; font-weight: bold;
+            transition: all 0.2s; color: #555; font-size: 14px;
+        }
+        .options input[type="radio"] { display: none; }
+        .options input[type="radio"]:checked + span { color: #fff; }
+        .options label:has(input[type="radio"]:checked) { background-color: #1976d2; border-color: #1976d2; }
+        
+        .writing-input { padding: 8px 12px; border: 2px solid #ccc; border-radius: 5px; width: 150px; font-size: 18px; outline: none; transition: border-color 0.2s; }
+        .writing-input:focus { border-color: #1976d2; }
+
+        .submit-btn { display: block; width: 100%; background: #1976d2; color: #fff; padding: 15px; border: none; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 40px; transition: background 0.3s; text-transform: uppercase; }
+        .submit-btn:hover { background: #115293; }
+        
+        #result-box { display: none; margin-top: 30px; padding: 25px; border-radius: 8px; border: 2px solid #4CAF50; background-color: #f9fff9; }
+        .score-highlight { font-size: 24px; font-weight: bold; }
+        .wrong-list { margin-top: 15px; line-height: 1.8; }
+        .wrong-item { color: #d32f2f; margin-bottom: 8px; padding-bottom: 8px; border-bottom: 1px dashed #ccc; }
+        .correct-item { color: #388e3c; font-weight: bold; background: #e8f5e9; padding: 2px 8px; border-radius: 4px;}
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>汉语水平考试 HSK (二级)</h1>
+    <div class="subtitle">Phiếu Trả Lời (答题卡) - HSK 3.0 - Cấp 2 - Đề 2</div>
+
+    <div class="student-info">
+        <input type="text" id="studentName" placeholder="Họ và tên (姓名)">
+        <input type="text" id="studentID" placeholder="Mã số học viên (nếu có)">
+    </div>
+
+    <div class="grid-container" id="exam-grid">
+    </div>
+
+    <button class="submit-btn" onclick="submitExam()">Nộp bài & Chấm điểm</button>
+    <div id="result-box"></div>
+</div>
+
+<script>
+    const examStructure = [
+        {
+            mainTitle: '一、听力 (Phần Nghe)',
+            parts: [
+                { title: "第一部分 (Câu 1-5)", start: 1, end: 5, type: 'radio', opts: ['A','B','C'] },
+                { title: "第二部分 (Câu 6-15)", start: 6, end: 15, type: 'radio', opts: ['A','B','C','D','E','F'] },
+                { title: "第三部分 (Câu 16-25)", start: 16, end: 25, type: 'radio', opts: ['A','B','C'] }
+            ]
+        },
+        {
+            mainTitle: '二、阅读 (Phần Đọc)',
+            parts: [
+                { title: "第一部分 (Câu 26-30)", start: 26, end: 30, type: 'radio', opts: ['A','B','C','D','E','F'] },
+                { title: "第二部分 (Câu 31-35)", start: 31, end: 35, type: 'radio', opts: ['A','B','C','D','E','F'] },
+                { title: "第三部分 (Câu 36-45)", start: 36, end: 45, type: 'radio', opts: ['A','B','C','D','E','F'] },
+                { title: "第四部分 (Câu 46-50)", start: 46, end: 50, type: 'radio', opts: ['A','B','C'] }
+            ]
+        },
+        {
+            mainTitle: '三、书写 (Phần Viết)',
+            parts: [
+                { title: "第一部分 (Câu 51-55)", start: 51, end: 55, type: 'radio', opts: ['A','B','C','D','E','F'] },
+                { title: "第二部分 (Câu 56-60) - Nhập Hán tự", start: 56, end: 60, type: 'text' }
+            ]
+        }
+    ];
+
+    const answerKey = {
+        1:'B', 2:'A', 3:'A', 4:'C', 5:'C',
+        6:'B', 7:'F', 8:'A', 9:'E', 10:'C',
+        11:'D', 12:'B', 13:'C', 14:'A', 15:'E',
+        16:'B', 17:'B', 18:'C', 19:'C', 20:'B',
+        21:'A', 22:'B', 23:'A', 24:'C', 25:'C',
+        26:'E', 27:'C', 28:'F', 29:'A', 30:'B',
+        31:'B', 32:'C', 33:'D', 34:'A', 35:'F',
+        36:'D', 37:'B', 38:'C', 39:'A', 40:'F',
+        41:'E', 42:'D', 43:'B', 44:'A', 45:'C',
+        46:'C', 47:'C', 48:'A', 49:'C', 50:'A',
+        51:'C', 52:'D', 53:'F', 54:'A', 55:'B',
+        56:'语', 57:'国', 58:'长', 59:'叫', 60:'字'
+    };
+
+    window.onload = function() {
+        const grid = document.getElementById("exam-grid");
+        
+        examStructure.forEach(section => {
+            let columnHTML = `<div><div class="main-title">${section.mainTitle}</div>`;
+            
+            section.parts.forEach(part => {
+                columnHTML += `<div class="section-title">${part.title}</div>`;
+                
+                for(let i = part.start; i <= part.end; i++) {
+                    columnHTML += `<div class="question">
+                                    <div class="question-num">${i}.</div>
+                                    <div class="options">`;
+                    if(part.type === 'radio') {
+                        part.opts.forEach(opt => {
+                            columnHTML += `<label>
+                                            <input type="radio" name="q${i}" value="${opt}">
+                                            <span>${opt}</span>
+                                           </label>`;
+                        });
+                    } else if (part.type === 'text') {
+                        columnHTML += `<input type="text" class="writing-input" name="q${i}" placeholder="Gõ Hán tự...">`;
+                    }
+                    columnHTML += `   </div>
+                                 </div>`;
+                }
+            });
+            columnHTML += `</div>`;
+            grid.innerHTML += columnHTML;
+        });
+    }
+
+    function submitExam() {
+        const studentName = document.getElementById("studentName").value || "Học viên ẩn danh";
+        let correctCount = 0;
+        let wrongCount = 0;
+        let wrongDetails = [];
+
+        for(let i = 1; i <= 60; i++) {
+            let userAnswer = "Chưa làm";
+            const radioSelected = document.querySelector(`input[name="q${i}"]:checked`);
+            const textInput = document.querySelector(`input[name="q${i}"][type="text"]`);
+            
+            if (radioSelected) {
+                userAnswer = radioSelected.value;
+            } else if (textInput) {
+                userAnswer = textInput.value.trim() || "Chưa nhập";
+            } else if (document.querySelector(`input[name="q${i}"][type="radio"]`)) {
+                userAnswer = "Chưa chọn";
+            }
+
+            const correctAnswer = answerKey[i];
+
+            if(userAnswer === correctAnswer) {
+                correctCount++;
+            } else {
+                wrongCount++;
+                wrongDetails.push(`<div class="wrong-item">Câu ${i}: Bạn chọn/viết <b>${userAnswer}</b> ➔ Đáp án đúng là <span class="correct-item">${correctAnswer}</span></div>`);
+            }
+        }
+
+        const resultBox = document.getElementById("result-box");
+        resultBox.style.display = "block";
+        
+        let scoreHTML = `<h2 style="color:#388e3c;">Kết Quả Làm Bài</h2>`;
+        scoreHTML += `<p><b>Học viên:</b> ${studentName}</p>`;
+        scoreHTML += `<p><b>Số câu đúng:</b> <span class="score-highlight" style="color:#388e3c;">${correctCount}/60</span></p>`;
+        scoreHTML += `<p><b>Số câu sai / bỏ trống:</b> <span class="score-highlight" style="color:#d32f2f;">${wrongCount}/60</span></p>`;
+
+        if(wrongCount > 0) {
+            scoreHTML += `<hr><h3 style="color:#d32f2f;">Chi tiết các câu sai:</h3><div class="wrong-list">`;
+            scoreHTML += wrongDetails.join('');
+            scoreHTML += `</div>`;
+        } else {
+            scoreHTML += `<div style="margin-top:20px; padding:15px; background:#e8f5e9; color:#2e7d32; border-radius:5px; text-align:center; font-weight:bold;">🎉 Tuyệt vời! Bạn đã trả lời đúng toàn bộ 60 câu hỏi.</div>`;
+        }
+
+        resultBox.innerHTML = scoreHTML;
+        resultBox.scrollIntoView({ behavior: 'smooth' });
+    }
+</script>
+
+</body>
+</html>
